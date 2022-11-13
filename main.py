@@ -5,8 +5,9 @@ from datetime import datetime
 from matplotlib import pyplot as plt
 
 BASE_URL = 'https://api.etherscan.io/api'
-API_KEY = 'ENTER API KEY HERE'
+API_KEY = '6XKW3B122JA9KQ2DKWRVWJXF2QW7IIQCQT'
 ETH_VALUE = 10 ** 18
+address = '0x364636B067d899B53d9e524Fa74305c90DCb7717'
 
 #Function to call the api endpoint
 def make_api_url(module, action, address, **kwargs):
@@ -73,31 +74,46 @@ def get_transactions(address):
     plt.plot(times, balances)
     plt.show()
 
-get_transactions(address)
+#get_transactions(address)
 
 
 #TO DO later
 
 #Get a list of 'ERC721 - Token Transfer Events' by Address
-'''https://api.etherscan.io/api
-   ?module=account
-   &action=tokennfttx
-   &contractaddress=0x06012c8cf97bead5deae237070f9587f8e7a266d
-   &address=0x6975be450864c02b4613023c2152ee0743572325
-   &page=1
-   &offset=100
-   &startblock=0
-   &endblock=27025780
-   &sort=asc
-   &apikey=YourApiKeyToken'''
+contractaddress = '0x2118fA9369b9a52fB6Bf8cF3fd392643d55a53B4' #Ape Gang NFT
 
-'''def nft_transfers(module, action, address, **kwargs):
-    get_nft_transfers = '''
+def get_nft_transfers(module, action, address, **kwargs):
+    nft_transfers = make_api_url('account', 'tokennfttx', contractaddress, address, page=1, offset=10000, startblock=0, endblock=99999999, sort='asc', apikey=API_KEY)
+    response = get(nft_transfers)
+    data = response.json()['result']
+    data.sort(key=lambda x: int(x['timeStamp']))
 
+    total_transfers = 0
 
+    for nfttx in data:
+        to = nfttx['to']
+        from_addr = nfttx['from']
+        token_name = nfttx['tokenName']
+        token_id = nfttx['tokenID']
+        time = datetime.fromtimestamp(int(nfttx['timeStamp']))
+        total_transfers = total_transfers + 1
+        print('-----------------------------')
+        print('To:', to)
+        print('From: ', from_addr)
+        print('Token Name: ', token_name)
+        print('Token ID: ', token_id)
+        print('Time: ', time)
+    
+    print('Total Transfers: ', total_transfers)
+
+get_nft_transfers(address)
+        
+
+#get_nft_transfers(address, contractaddress)
+
+'''
 #Seperate tests below here------------------------
-eth = Etherscan('ENTER API KEY HERE')
-address ='Enter wallet address here'
+eth = Etherscan('6XKW3B122JA9KQ2DKWRVWJXF2QW7IIQCQT')
 
 #Set multiple wallet addresses
 Wallet_Addresses = ["",
@@ -122,3 +138,4 @@ Wallet_Address = ''
 Contract_Address = '0xdAC17F958D2ee523a2206206994597C13D831ec7' #USDT contract address
 acc_token_balance = eth.get_acc_balance_by_token_and_contract_address(address = Wallet_Address, contract_address = Contract_Address)
 #print('USDT Balance: ', float(acc_token_balance)/100000)
+'''
