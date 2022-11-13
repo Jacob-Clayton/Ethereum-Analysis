@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 
 BASE_URL = 'https://api.etherscan.io/api'
 API_KEY = 'ENTER API KEY HERE'
-address ='0x40427366d73cEF30A09c4f369Cc722faa974489a'
 ETH_VALUE = 10 ** 18
 
 #Function to call the api endpoint
@@ -98,6 +97,7 @@ get_transactions(address)
 
 #Seperate tests below here------------------------
 eth = Etherscan('ENTER API KEY HERE')
+address ='Enter wallet address here'
 
 #Set multiple wallet addresses
 Wallet_Addresses = ["",
