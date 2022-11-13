@@ -8,3 +8,7 @@
 6. Calculate ETH spent on gas
 7. Get ETH balance over time of the address you chose
 8. Create chart (Balance vs time)
+
+
+# API Source
+Kotsias, P. C., pcko1/etherscan-python. https://github.com/pcko1/etherscan-python (2020). doi:10.5281/zenodo.4306855
