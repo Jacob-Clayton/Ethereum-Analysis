@@ -44,10 +44,13 @@ def get_account_balance(address):
 
 #Function to get a list of all transactions by address
 def get_transactions(address):
+
+    #Get external eth transactions
     transactions_url = make_api_url('account', 'txlist', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response = get(transactions_url)
     data = response.json()['result']
 
+    #Get internal eth transactions
     internal_tx_url = make_api_url('account', 'txlistinternal', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response2 = get(internal_tx_url)
     data2 = response2.json()['result']
@@ -59,7 +62,7 @@ def get_transactions(address):
     balances = []
     times = []
 
-    #Calculate value of ETH transferred to and from address
+    #Calculate value of ETH transferred externally and internally
     for tx in data:
         to = tx['to']
         from_addr = tx['from']
@@ -86,7 +89,7 @@ def get_transactions(address):
 
     #print(current_balance)   
 
-    #Create chart
+    #Create matplotlib chart
     st.set_option('deprecation.showPyplotGlobalUse', False)
     fig = plt.figure()
     ax = fig.add_subplot(111)
