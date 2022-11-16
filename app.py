@@ -94,10 +94,9 @@ def get_transactions(address):
     plt.ylabel('Ethereum')
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%y'))
 
-#get_transactions(address)
+get_transactions(address)
 
 #Streamlit app continued
-
 if address:
     st.pyplot(get_transactions(address))
     st.text('Chart for: ')
