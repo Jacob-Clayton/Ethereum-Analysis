@@ -11,4 +11,4 @@
 
 
 # API Source
-Kotsias, P. C., pcko1/etherscan-python. https://github.com/pcko1/etherscan-python (2020). doi:10.5281/zenodo.4306855
+https://etherscan.io/apis
