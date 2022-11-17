@@ -7,25 +7,27 @@ import matplotlib.dates as mdates
 import streamlit as st
 from dotenv import load_dotenv
 import os 
+import json
 
 BASE_URL = 'https://api.etherscan.io/api'
 API_KEY = os.getenv('API_KEY')
 ETH_VALUE = 10 ** 18
-#address = '0x364636B067d899B53d9e524Fa74305c90DCb7717'
 
+#Function to configure the .env with the api key
 def configure():
     load_dotenv()
 
 #Streamlit App setup
-
 st.title('Ethereum Wallet Balance App')
 st.markdown('###### A web app to visualise the historical Ethereum balance of any Ethereum wallet')
 
+#Streamlit text entry box for eth address
 address = st.text_input("Enter Ethereum Wallet Address: ")
 
 
-#Function to call the api endpoint
+#Function to call the api
 def make_api_url(module, action, address, **kwargs):
+    #Call the api key function
     configure()
     url = BASE_URL + f"?module={module}&action={action}&address={address}&apikey={API_KEY}"
 
@@ -39,30 +41,38 @@ def get_account_balance(address):
     response = get(balance_url)
     data = response.json()
 
+    #Formula to convert resulting number into recognisable Eth value
     value = int(data['result'])/ ETH_VALUE
     return value
 
 #Function to get a list of all transactions by address
 def get_transactions(address):
+
+    #Get external eth transactions
     transactions_url = make_api_url('account', 'txlist', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response = get(transactions_url)
     data = response.json()['result']
 
+    #Get internal eth transactions
     internal_tx_url = make_api_url('account', 'txlistinternal', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response2 = get(internal_tx_url)
     data2 = response2.json()['result']
 
-    data.extend(data2)
+    #Merge external and internal eth transactions
+    #data.extend(data2)
+    #data["results"].extend(data2["results"])
+    data = ['results', data + data2]
+
+    #Sort transactions by date
     data.sort(key=lambda x: int(x['timeStamp']))
 
     current_balance = 0
     balances = []
     times = []
 
-    #Calculate value of ETH transferred to and from address
+    #Calculate value of ETH transferred externally and internally
     for tx in data:
         to = tx['to']
-        from_addr = tx['from']
         value = int(tx['value'])/ETH_VALUE
 
         #Calculate ETH spent on gas
@@ -86,7 +96,7 @@ def get_transactions(address):
 
     #print(current_balance)   
 
-    #Create chart
+    #Create matplotlib chart on streamlit
     st.set_option('deprecation.showPyplotGlobalUse', False)
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -94,10 +104,10 @@ def get_transactions(address):
     plt.ylabel('Ethereum')
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%y'))
 
-#get_transactions(address)
+#Call function, comment out for final version because it is called later
+get_transactions(address)
 
-#Streamlit app continued
-
+#Create matplotlib chart on streamlit when an address is entered
 if address:
     st.pyplot(get_transactions(address))
     st.text('Chart for: ')
@@ -105,13 +115,25 @@ if address:
 
 
 
-
-
 #TO DO later
 
 #Get a list of 'ERC721 - Token Transfer Events' by Address
-contractaddress = '0x2118fA9369b9a52fB6Bf8cF3fd392643d55a53B4' #Ape Gang NFT
+#contractaddress = '0x2118fA9369b9a52fB6Bf8cF3fd392643d55a53B4' #Ape Gang NFT
 address = '0x364636B067d899B53d9e524Fa74305c90DCb7717' #Kolsas wallet
+
+
+#Seperate tests below here--------------------------------
+eth = Etherscan(os.getenv('API_KEY'))
+
+#Get single wallet balance
+eth_balance = eth.get_eth_balance(address)
+#print('Eth Balance: ', float(eth_balance)/ETH_VALUE)
+
+#Get latest price of ETH
+eth_price = eth.get_eth_last_price()
+#print('Eth Price: ', eth_price)
+
+
 '''
 def get_nft_transfers(address, contractaddress, **kwargs):
     nft_transfers = make_api_url('account', contractaddress, address, page=1, offset=10000, startblock=0, endblock=99999999, sort='asc', apikey=API_KEY)
@@ -138,35 +160,4 @@ def get_nft_transfers(address, contractaddress, **kwargs):
     print('Total Transfers: ', total_transfers)
 
 get_nft_transfers(address, contractaddress)
-'''
-
-
-
-'''
-#Seperate tests below here------------------------
-eth = Etherscan('6XKW3B122JA9KQ2DKWRVWJXF2QW7IIQCQT')
-
-#Set multiple wallet addresses
-Wallet_Addresses = ["",
-                    "",
-                    ""]
-
-
-#Get single wallet balance
-eth_balance = eth.get_eth_balance(address)
-#print('Eth Balance: ', float(eth_balance)/ETH_VALUE)
-
-#Get multiple wallet balances
-eth_balances = eth.get_eth_balance_multiple(Wallet_Addresses)
-#print('Eth Balances: ', eth_balances)
-
-#Get latest price of ETH
-eth_price = eth.get_eth_last_price()
-#print('Eth Price: ', eth_price)
-
-#Get acc blanace by erc-20 token in USD value
-Wallet_Address = ''
-Contract_Address = '0xdAC17F958D2ee523a2206206994597C13D831ec7' #USDT contract address
-acc_token_balance = eth.get_acc_balance_by_token_and_contract_address(address = Wallet_Address, contract_address = Contract_Address)
-#print('USDT Balance: ', float(acc_token_balance)/100000)
 '''
