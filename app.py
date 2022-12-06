@@ -108,5 +108,5 @@ def get_transactions(address):
 #Create matplotlib chart on streamlit when an address is entered
 if address:
     st.pyplot(get_transactions(address))
-    st.text('Chart for: ')
-    st.text(address)
+    st.text('Chart for: ') 
+    st.text(address)    
