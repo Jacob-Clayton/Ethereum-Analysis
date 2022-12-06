@@ -20,12 +20,15 @@ ETH_VALUE = 10 ** 18
 def configure():
     load_dotenv()
 
+
+
 #Streamlit App setup
-st.title('Ethereum Balance App')
-st.markdown('###### A web app to visualise the historical Ethereum balance of any Ethereum address')
+st.title('Ethereum Wallet Balance App')
+st.markdown('###### A web app to visualise the historical Ethereum balance of any Ethereum wallet')
 
 #Streamlit text entry box for eth address
-address = st.text_input("Enter Ethereum Address: ")
+address = st.text_input("Enter Ethereum Wallet Address: ")
+
 
 #Function to call the api
 def make_api_url(module, action, address, **kwargs):
@@ -46,7 +49,6 @@ def get_account_balance(address):
     #Formula to convert resulting number into recognisable Eth value
     value = int(data['result'])/ ETH_VALUE
     return value
-
 
 #Function to get a list of all transactions by address
 def get_transactions(address):
@@ -104,6 +106,9 @@ def get_transactions(address):
     plt.plot(times, balances)
     plt.ylabel('Ethereum')
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%y'))
+
+#Call function, comment out for final version because it is called later
+get_transactions(address)
 
 #Create matplotlib chart on streamlit when an address is entered
 if address:
