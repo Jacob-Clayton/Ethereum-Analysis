@@ -62,7 +62,7 @@ def get_transactions(address):
     data2 = response2.json()['result']
 
     #Merge external and internal eth transactions
-    data.extend(data2)
+    data = data + data2
 
     #Sort transactions by date
     data.sort(key=lambda x: int(x['timeStamp']))
