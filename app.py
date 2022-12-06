@@ -6,6 +6,7 @@ import matplotlib.dates as mdates
 import streamlit as st
 from dotenv import load_dotenv
 import os 
+import json
 
 #Etherscan api url
 BASE_URL = 'https://api.etherscan.io/api'
@@ -54,15 +55,15 @@ def get_transactions(address):
     #Get external eth transactions
     transactions_url = make_api_url('account', 'txlist', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response = get(transactions_url)
-    data = response.json()['result']
+    data = json.loads(response.text)['result']
 
     #Get internal eth transactions
     internal_tx_url = make_api_url('account', 'txlistinternal', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response2 = get(internal_tx_url)
-    data2 = response2.json()['result']
+    data2 = json.loads(response2.text)['result']
 
     #Merge external and internal eth transactions
-    data = data + data2
+    data.extend(data2)
 
     #Sort transactions by date
     data.sort(key=lambda x: int(x['timeStamp']))
