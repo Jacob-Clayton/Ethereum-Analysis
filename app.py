@@ -55,12 +55,12 @@ def get_transactions(address):
     #Get external eth transactions
     transactions_url = make_api_url('account', 'txlist', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response = get(transactions_url)
-    data = json.loads(response.text)['result']
+    data = response.json()['result']
 
     #Get internal eth transactions
     internal_tx_url = make_api_url('account', 'txlistinternal', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response2 = get(internal_tx_url)
-    data2 = json.loads(response2.text)['result']
+    data2 = response2.json()['result']
 
     #Merge external and internal eth transactions
     data.extend(data2)
