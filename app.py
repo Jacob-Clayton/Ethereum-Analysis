@@ -11,9 +11,6 @@ import json
 #Etherscan api url
 BASE_URL = 'https://api.etherscan.io/api'
 
-#Etherscan API key
-API_KEY = os.getenv('API_KEY')
-
 #Formula to convert eth value into recognisable eth value
 ETH_VALUE = 10 ** 18
 
@@ -32,11 +29,12 @@ address = st.text_input("Enter Ethereum Address: ")
 def make_api_url(module, action, address, **kwargs):
     #Call the api key function
     configure()
-    url = BASE_URL + f"?module={module}&action={action}&address={address}&apikey={API_KEY}"
+    url = BASE_URL + f"?module={module}&action={action}&address={address}&apikey={os.getenv('API_KEY')}"
 
     for key, value in kwargs.items():
         url += f"&{key}={value}"
     return url
+    
 
 #Funtion to get account balance
 def get_account_balance(address):
@@ -55,19 +53,19 @@ def get_transactions(address):
     #Get external eth transactions
     transactions_url = make_api_url('account', 'txlist', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response = get(transactions_url)
-    data = response.json()['result']
+    data = json.loads(response.text)['result']
+
 
     #Get internal eth transactions
-    internal_tx_url = make_api_url('account', 'txlistinternal', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
+    internal_tx_url = make_api_url('account', 'txlistinternal', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc',)
     response2 = get(internal_tx_url)
-    data2 = response2.json()['result']
+    data2 = json.loads(response2.text)['result']
 
     #Merge external and internal eth transactions
     data.extend(data2)
 
     #Sort transactions by date
     data.sort(key=lambda x: int(x['timeStamp']))
-
     current_balance = 0
     balances = []
     times = []
@@ -105,6 +103,9 @@ def get_transactions(address):
     plt.plot(times, balances)
     plt.ylabel('Ethereum')
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%y'))
+
+#Call function, comment out for final version because it is called later
+#get_transactions(address)
 
 #Create matplotlib chart on streamlit when an address is entered
 if address:
