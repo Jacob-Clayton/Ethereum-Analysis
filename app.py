@@ -35,6 +35,7 @@ def make_api_url(module, action, address, **kwargs):
         url += f"&{key}={value}"
     return url
     
+    
 
 #Funtion to get account balance
 def get_account_balance(address):
@@ -105,7 +106,7 @@ def get_transactions(address):
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%y'))
 
 #Call function, comment out for final version because it is called later
-#get_transactions(address)
+get_transactions(address)
 
 #Create matplotlib chart on streamlit when an address is entered
 if address:
