@@ -11,8 +11,10 @@ from web3 import Web3
 from web3.providers import HTTPProvider
 
 
-#Etherscan api url
+#Etherscan API URL
 BASE_URL = 'https://api.etherscan.io/api'
+#Infura API URL
+INFURA_URL = 'https://mainnet.infura.io/v3/'
 
 #Formula to convert eth value into recognisable eth value
 ETH_VALUE = 10 ** 18
@@ -29,17 +31,17 @@ st.markdown('###### App to analyse the Ethereum balance of any Ethereum address'
 address = st.text_input("Enter Ethereum Address or ENS Name: ")
 
 # Create an HTTP provider that connects to an Ethereum node at the given URL
-http_provider = HTTPProvider('https://mainnet.infura.io/v3/e9b1c7b083ca412ebd5db2a1b23e4ad9')
+http_provider = HTTPProvider('INFURA_KEY')
 
 # Create a Web3 instance
 web3 = Web3(http_provider)
 
 # Check if the input value is an ENS name or an Ethereum address
 if web3.isAddress(address):
+    #If the input value is an Ethereum address, do nothing
     pass
-    # The input value is an Ethereum address, do nothing
 else:
-    # The input value is an ENS name, convert it to the corresponding Ethereum address
+    #If the input value is an ENS name, convert it to the corresponding Ethereum address
     address = web3.ens.address(address)
 
 #Function to call the api
@@ -53,7 +55,6 @@ def make_api_url(module, action, address, **kwargs):
     return url
     
     
-
 #Funtion to get account balance
 def get_account_balance(address):
     balance_url = make_api_url("account", "balance", address, tag='latest')
@@ -173,7 +174,7 @@ def get_transactions(address):
         'axes.labelsize': 10,
         'axes.titlesize': 12,
         'lines.linewidth': 1.5,
-        'font.family': 'Futura',
+        'font.family': 'sans-serif',
     }):
 
         #Create matplotlib chart on streamlit
@@ -193,13 +194,13 @@ def get_transactions(address):
 
         # Display max, min, and average balance on the page
         st.subheader('Analysis')
-        st.markdown("**Max balance:** %.4f ETH on %s" % (max_balance, max_date))
-        st.markdown("**Min balance:** %.4f ETH on %s" % (min_balance, min_date))
-        st.markdown("**Average balance:** %.4f ETH over %d days" % (avg_balance, num_days))
+        st.markdown("Max balance: %.3f ETH on %s" % (max_balance, max_date))
+        st.markdown("Min balance: %.3f ETH on %s" % (min_balance, min_date))
+        st.markdown("Average balance: %.3f ETH over %d days" % (avg_balance, num_days))
 
         # Print the highest transfer in and out of Ethereum and their respective dates
-        st.markdown('The largest transfer in of Ethereum was %.4f ETH on %s' % (max_transfer_in, max_transfer_in_date))
-        st.markdown('The largest transfer out of Ethereum was %.4f ETH on %s' % (max_transfer_out, max_transfer_out_date))
+        st.markdown('The largest transfer in of Ethereum was %.3f ETH on %s' % (max_transfer_in, max_transfer_in_date))
+        st.markdown('The largest transfer out of Ethereum was %.3f ETH on %s' % (max_transfer_out, max_transfer_out_date))
 
 #Call function, comment out for final version because it is called later
 #get_transactions(address)
@@ -207,4 +208,3 @@ def get_transactions(address):
 #Create matplotlib chart on streamlit when an address is entered
 if address:
     get_transactions(address)   
-
