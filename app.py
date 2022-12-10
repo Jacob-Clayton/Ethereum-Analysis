@@ -201,8 +201,8 @@ def get_transactions(address):
         st.markdown("Average balance: %.3f ETH over %d days" % (avg_balance, num_days))
 
         # Print the highest transfer in and out of Ethereum and their respective dates
-        st.markdown('The largest transfer in of Ethereum was %.3f ETH on %s' % (max_transfer_in, max_transfer_in_date))
-        st.markdown('The largest transfer out of Ethereum was %.3f ETH on %s' % (max_transfer_out, max_transfer_out_date))
+        st.markdown('The largest transfer in was %.3f ETH on %s' % (max_transfer_in, max_transfer_in_date))
+        st.markdown('The largest transfer out was %.3f ETH on %s' % (max_transfer_out, max_transfer_out_date))
 
 #Call function, comment out for final version because it is called later
 #get_transactions(address)
