@@ -22,7 +22,7 @@ def configure():
     load_dotenv()
 
 #Streamlit App setup
-st.title('Ethereum Balance App')
+st.title('Ethereum Account Analysis')
 st.markdown('###### App to analyse the Ethereum balance of any Ethereum address')
 
 # Streamlit text entry box for eth address
