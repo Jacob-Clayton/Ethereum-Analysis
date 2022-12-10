@@ -15,6 +15,8 @@ from web3.providers import HTTPProvider
 BASE_URL = 'https://api.etherscan.io/api'
 #Infura API URL
 INFURA_URL = 'https://mainnet.infura.io/v3/'
+load_dotenv()
+infura_api_key = os.getenv('INFURA_API_KEY')
 
 #Formula to convert eth value into recognisable eth value
 ETH_VALUE = 10 ** 18
@@ -31,7 +33,7 @@ st.markdown('###### App to analyse the Ethereum balance of any Ethereum address'
 address = st.text_input("Enter Ethereum Address or ENS Name: ")
 
 # Create an HTTP provider that connects to an Ethereum node at the given URL
-http_provider = HTTPProvider('INFURA_KEY')
+http_provider = HTTPProvider(f'https://mainnet.infura.io/v3/{infura_api_key}')
 
 # Create a Web3 instance
 web3 = Web3(http_provider)
