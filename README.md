@@ -1,7 +1,7 @@
 # Etherscan API Code
 
-1. Get api key from .env and enter wallet address you want to analyse
-2. Call the api endpoint
+1. Get api keys from .env and enter wallet address you want to analyse
+2. Call two api endpoints
 3. Get account balance
 4. Get a list of all transactions by address
 5. Calculate value of ETH transferred to and from address
@@ -14,5 +14,6 @@
 12. Host it all on streamlit, allowing the end user to enter an ethereum address
 
 
-# API Source
+# API Sources
 https://etherscan.io/apis
+https://www.infura.io/
