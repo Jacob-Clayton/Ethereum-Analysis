@@ -66,5 +66,6 @@ urllib3==1.26.12
 utils==1.0.1
 validators==0.20.0
 watchdog==2.1.9
+web3==5.31.3
 yarl==1.8.1
 zipp==3.10.0

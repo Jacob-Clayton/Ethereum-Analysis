@@ -7,6 +7,9 @@ import streamlit as st
 from dotenv import load_dotenv
 import os 
 import json
+from web3 import Web3
+from web3.providers import HTTPProvider
+
 
 #Etherscan api url
 BASE_URL = 'https://api.etherscan.io/api'
@@ -22,8 +25,23 @@ def configure():
 st.title('Ethereum Balance App')
 st.markdown('###### A web app to visualise the historical Ethereum balance of any Ethereum address')
 
-#Streamlit text entry box for eth address
-address = st.text_input("Enter Ethereum Address: ")
+# Streamlit text entry box for eth address
+address = st.text_input("Enter Ethereum Address or ENS Name: ")
+
+# Create an HTTP provider that connects to an Ethereum node at the given URL
+http_provider = HTTPProvider('https://mainnet.infura.io/v3/e9b1c7b083ca412ebd5db2a1b23e4ad9')
+
+# Create a Web3 instance
+web3 = Web3(http_provider)
+
+# Check if the input value is an ENS name or an Ethereum address
+if web3.isAddress(address):
+    # The input value is an Ethereum address, do nothing
+    pass
+else:
+    # The input value is an ENS name, convert it to the corresponding Ethereum address
+    address = web3.ens.address(address)
+
 
 #Function to call the api
 def make_api_url(module, action, address, **kwargs):
