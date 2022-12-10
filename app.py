@@ -23,7 +23,7 @@ def configure():
 
 #Streamlit App setup
 st.title('Ethereum Balance App')
-st.markdown('###### A web app to visualise the historical Ethereum balance of any Ethereum address')
+st.markdown('###### App to analyse the Ethereum balance of any Ethereum address')
 
 # Streamlit text entry box for eth address
 address = st.text_input("Enter Ethereum Address or ENS Name: ")
@@ -36,8 +36,8 @@ web3 = Web3(http_provider)
 
 # Check if the input value is an ENS name or an Ethereum address
 if web3.isAddress(address):
-    # The input value is an Ethereum address, do nothing
     pass
+    # The input value is an Ethereum address, do nothing
 else:
     # The input value is an ENS name, convert it to the corresponding Ethereum address
     address = web3.ens.address(address)
@@ -89,6 +89,12 @@ def get_transactions(address):
     balances = []
     times = []
 
+    # Initialize variables to keep track of the highest transfer in and out of Ethereum
+    max_transfer_in = 0
+    max_transfer_in_date = None
+    max_transfer_out = 0
+    max_transfer_out_date = None
+
     #Calculate value of ETH transferred externally and internally
     for tx in data:
         to = tx['to']
@@ -103,12 +109,24 @@ def get_transactions(address):
         time = datetime.fromtimestamp(int(tx['timeStamp']))
         money_in = to.lower() == address.lower()
 
-        #Get ETH balance over time of the address
+        # Get ETH balance over time of the address
         if tx['isError'] == '0':
             if money_in:
                 current_balance += value
+
+                # Check if the current transfer is the highest transfer in
+                if value > max_transfer_in:
+                    # Update the maximum transfer in and the date of the transaction
+                    max_transfer_in = value
+                    max_transfer_in_date = time.strftime("%d %B %Y")
             else:
                 current_balance -= value + gas
+
+                # Check if the current transfer is the highest transfer out
+                if value > max_transfer_out:
+                    # Update the maximum transfer out and the date of the transaction
+                    max_transfer_out = value
+                    max_transfer_out_date = time.strftime("%d %B %Y")
 
         balances.append(current_balance)
         times.append(time)
@@ -145,19 +163,27 @@ def get_transactions(address):
     ax = fig.add_subplot(111)
     plt.plot(times, balances)
     plt.ylabel('Ethereum')
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%y'))
+    plt.xticks(rotation=45)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%Y'))
+    st.pyplot()
+
+    #Show address analysed details
+    st.write('Ethereum Address: ', address)
 
     # Display max, min, and average balance on the page
+    st.subheader('Analysis')
     st.markdown("Max balance: %.4f ETH on %s" % (max_balance, max_date))
     st.markdown("Min balance: %.4f ETH on %s" % (min_balance, min_date))
     st.markdown("Average balance: %.4f ETH over %d days" % (avg_balance, num_days))
+
+    # Print the highest transfer in and out of Ethereum and their respective dates
+    st.markdown('The largest transfer in of Ethereum was %.4f ETH on %s' % (max_transfer_in, max_transfer_in_date))
+    st.markdown('The largest transfer out of Ethereum was %.4f ETH on %s' % (max_transfer_out, max_transfer_out_date))
 
 #Call function, comment out for final version because it is called later
 #get_transactions(address)
 
 #Create matplotlib chart on streamlit when an address is entered
 if address:
-    st.pyplot(get_transactions(address))
-    st.text('Chart for: ') 
-    st.text(address)    
+    get_transactions(address)   
 
