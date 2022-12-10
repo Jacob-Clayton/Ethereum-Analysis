@@ -42,9 +42,6 @@ else:
     # The input value is an ENS name, convert it to the corresponding Ethereum address
     address = web3.ens.address(address)
 
-# Use the web3.ens.name() method to get the ENS name for the given address
-ens_name = web3.ens.name(address)
-
 #Function to call the api
 def make_api_url(module, action, address, **kwargs):
     #Call the api key function
@@ -193,8 +190,6 @@ def get_transactions(address):
 
         #Show address analysed details
         st.write('Ethereum Address: ', address)
-        # Use the st.write() method to display the ENS name in the Streamlit app
-        st.write(f"ENS Name: {ens_name}")
 
         # Display max, min, and average balance on the page
         st.subheader('Analysis')
