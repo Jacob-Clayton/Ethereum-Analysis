@@ -97,6 +97,30 @@ def get_transactions(address):
 
     #print(current_balance)   
 
+    # Calculate max, min, and average balance
+    max_balance = max(balances)
+    min_balance = min(balances)
+    avg_balance = sum(balances) / len(balances)   
+
+    # Find the index of the max and min balance values
+    max_index = balances.index(max_balance)
+    min_index = balances.index(min_balance)
+
+    # Get the date of the max and min balance values
+    max_date = times[max_index]
+    min_date = times[min_index]
+
+    # Format the date values
+    max_date = max_date.strftime("%d %B %Y")
+    min_date = min_date.strftime("%d %B %Y")
+
+    # Calculate the date of the first and last transactions
+    first_date = times[0]
+    last_date = times[-1]
+
+    # Calculate the number of days between the first and last transactions
+    num_days = (last_date - first_date).days
+
     #Create matplotlib chart on streamlit
     st.set_option('deprecation.showPyplotGlobalUse', False)
     fig = plt.figure()
@@ -104,6 +128,11 @@ def get_transactions(address):
     plt.plot(times, balances)
     plt.ylabel('Ethereum')
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%y'))
+
+    # Display max, min, and average balance on the page
+    st.markdown("Max balance: %.4f ETH on %s" % (max_balance, max_date))
+    st.markdown("Min balance: %.4f ETH on %s" % (min_balance, min_date))
+    st.markdown("Average balance: %.4f ETH over %d days" % (avg_balance, num_days))
 
 #Call function, comment out for final version because it is called later
 #get_transactions(address)
@@ -113,3 +142,4 @@ if address:
     st.pyplot(get_transactions(address))
     st.text('Chart for: ') 
     st.text(address)    
+
