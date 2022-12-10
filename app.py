@@ -42,6 +42,8 @@ else:
     # The input value is an ENS name, convert it to the corresponding Ethereum address
     address = web3.ens.address(address)
 
+# Use the web3.ens.name() method to get the ENS name for the given address
+ens_name = web3.ens.name(address)
 
 #Function to call the api
 def make_api_url(module, action, address, **kwargs):
@@ -157,28 +159,52 @@ def get_transactions(address):
     # Calculate the number of days between the first and last transactions
     num_days = (last_date - first_date).days
 
-    #Create matplotlib chart on streamlit
-    st.set_option('deprecation.showPyplotGlobalUse', False)
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    plt.plot(times, balances)
-    plt.ylabel('Ethereum')
-    plt.xticks(rotation=45)
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%Y'))
-    st.pyplot()
+    # Set the style of the chart using the custom style
+    with plt.style.context({
+        'figure.facecolor': '#0E1117',
+        'axes.facecolor': '#0E1117',
+        'axes.grid': True,
+        'grid.color': '#444444',
+        'grid.linewidth': 0.5,
+        'grid.alpha': 0.3,
+        'text.color': '#ffffff',
+        'xtick.color': '#ffffff',
+        'ytick.color': '#ffffff', 
+        'xtick.labelsize': 9,
+        'ytick.labelsize': 9,
+        'axes.labelcolor': '#ffffff',
+        'axes.labelsize': 10,
+        'axes.titlesize': 12,
+        'lines.linewidth': 1.5,
+        'font.family': 'Futura',
+    }):
 
-    #Show address analysed details
-    st.write('Ethereum Address: ', address)
+        #Create matplotlib chart on streamlit
+        
+        st.set_option('deprecation.showPyplotGlobalUse', False)   
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        plt.plot(times, balances)
+        plt.ylabel('Ethereum')
+        plt.xticks(rotation=45)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%Y'))
+        st.pyplot()
+        
 
-    # Display max, min, and average balance on the page
-    st.subheader('Analysis')
-    st.markdown("Max balance: %.4f ETH on %s" % (max_balance, max_date))
-    st.markdown("Min balance: %.4f ETH on %s" % (min_balance, min_date))
-    st.markdown("Average balance: %.4f ETH over %d days" % (avg_balance, num_days))
+        #Show address analysed details
+        st.write('Ethereum Address: ', address)
+        # Use the st.write() method to display the ENS name in the Streamlit app
+        st.write(f"ENS Name: {ens_name}")
 
-    # Print the highest transfer in and out of Ethereum and their respective dates
-    st.markdown('The largest transfer in of Ethereum was %.4f ETH on %s' % (max_transfer_in, max_transfer_in_date))
-    st.markdown('The largest transfer out of Ethereum was %.4f ETH on %s' % (max_transfer_out, max_transfer_out_date))
+        # Display max, min, and average balance on the page
+        st.subheader('Analysis')
+        st.markdown("**Max balance:** %.4f ETH on %s" % (max_balance, max_date))
+        st.markdown("**Min balance:** %.4f ETH on %s" % (min_balance, min_date))
+        st.markdown("**Average balance:** %.4f ETH over %d days" % (avg_balance, num_days))
+
+        # Print the highest transfer in and out of Ethereum and their respective dates
+        st.markdown('The largest transfer in of Ethereum was %.4f ETH on %s' % (max_transfer_in, max_transfer_in_date))
+        st.markdown('The largest transfer out of Ethereum was %.4f ETH on %s' % (max_transfer_out, max_transfer_out_date))
 
 #Call function, comment out for final version because it is called later
 #get_transactions(address)
