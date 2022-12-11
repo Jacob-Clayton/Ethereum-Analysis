@@ -1,5 +1,6 @@
 #Import libraries and env for API key
 from requests import get
+import requests
 from datetime import datetime
 from matplotlib import pyplot as plt
 import matplotlib.dates as mdates
@@ -46,7 +47,8 @@ else:
     #If the input value is an ENS name, convert it to the corresponding Ethereum address
     address = web3.ens.address(address)
 
-#Function to call the api
+
+#Function to call the Etherscan API
 def make_api_url(module, action, address, **kwargs):
     #Call the api key function
     configure()
@@ -67,7 +69,6 @@ def get_account_balance(address):
     value = int(data['result'])/ ETH_VALUE
     return value
 
-
 #Function to get a list of all transactions by address
 def get_transactions(address):
 
@@ -75,7 +76,6 @@ def get_transactions(address):
     transactions_url = make_api_url('account', 'txlist', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc')
     response = get(transactions_url)
     data = json.loads(response.text)['result']
-
 
     #Get internal eth transactions
     internal_tx_url = make_api_url('account', 'txlistinternal', address, startblock=0, endblock=99999999, page=1, offset=10000, sort='asc',)
@@ -134,6 +134,7 @@ def get_transactions(address):
         times.append(time)
 
     #print(current_balance)   
+    current_balance = get_account_balance(address)
 
     # Calculate max, min, and average balance
     max_balance = max(balances)
@@ -196,17 +197,20 @@ def get_transactions(address):
 
         # Display max, min, and average balance on the page
         st.subheader('Analysis')
-        st.markdown("Max balance: %.3f ETH on %s" % (max_balance, max_date))
+        st.markdown("Current balance: %.3f ETH" % (current_balance))
+        st.markdown("Max balance: %.2f ETH on %s" % (max_balance, max_date))
         st.markdown("Min balance: %.3f ETH on %s" % (min_balance, min_date))
-        st.markdown("Average balance: %.3f ETH over %d days" % (avg_balance, num_days))
+        st.markdown("Average balance: %.2f ETH over %d days" % (avg_balance, num_days))
 
         # Print the highest transfer in and out of Ethereum and their respective dates
-        st.markdown('The largest transfer in was %.3f ETH on %s' % (max_transfer_in, max_transfer_in_date))
-        st.markdown('The largest transfer out was %.3f ETH on %s' % (max_transfer_out, max_transfer_out_date))
+        st.markdown('The largest transfer in was %.2f ETH on %s' % (max_transfer_in, max_transfer_in_date))
+        st.markdown('The largest transfer out was %.2f ETH on %s' % (max_transfer_out, max_transfer_out_date))
+
+
 
 #Call function, comment out for final version because it is called later
 #get_transactions(address)
 
 #Create matplotlib chart on streamlit when an address is entered
 if address:
-    get_transactions(address)   
+    get_transactions(address)
