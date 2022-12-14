@@ -28,7 +28,7 @@ def configure():
 
 #Streamlit App setup
 st.title('Ethereum Account Analysis')
-st.markdown('###### App to analyse the Ethereum balance of any Ethereum address')
+st.markdown('###### App to analyse the balance of any Ethereum address')
 
 # Streamlit text entry box for eth address
 address = st.text_input("Enter Ethereum Address or ENS Name: ")
