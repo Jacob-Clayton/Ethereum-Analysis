@@ -4,12 +4,15 @@ import requests
 from datetime import datetime
 from matplotlib import pyplot as plt
 import matplotlib.dates as mdates
+import pandas as pd
+import numpy as np
 import streamlit as st
 from dotenv import load_dotenv
 import os 
 import json
 from web3 import Web3
 from web3.providers import HTTPProvider
+from collections import Counter
 
 
 #Etherscan API URL
@@ -96,6 +99,8 @@ def get_transactions(address):
     max_transfer_in_date = None
     max_transfer_out = 0
     max_transfer_out_date = None
+    # Initialize a variable to keep track of the total amount of ether spent on gas
+    total_gas_spent = 0
 
     #Calculate value of ETH transferred externally and internally
     for tx in data:
@@ -105,11 +110,16 @@ def get_transactions(address):
         #Calculate ETH spent on gas
         if 'gasPrice' in tx:
             gas = int(tx['gasUsed']) * int(tx['gasPrice']) / ETH_VALUE
+            total_gas_spent += int(tx["gasUsed"]) * int(tx["gasPrice"]) / ETH_VALUE
         else:
             gas = int(tx['gasUsed']) / ETH_VALUE
-            
+            total_gas_spent += int(tx["gasUsed"]) / ETH_VALUE
+
+        #Convert total_gas_spent to a float and round it to 3 decimal places
+        total_gas_spent = float(total_gas_spent)
+
         time = datetime.fromtimestamp(int(tx['timeStamp']))
-        money_in = to.lower() == address.lower()
+        money_in = to.lower() == address.lower()        
 
         # Get ETH balance over time of the address
         if tx['isError'] == '0':
@@ -160,6 +170,29 @@ def get_transactions(address):
     # Calculate the number of days between the first and last transactions
     num_days = (last_date - first_date).days
 
+
+    #Preparing the table for most interacted with addresses
+    transactions = data
+
+    # Create a Counter to count the number of times each address appears in the "to" and "from" fields
+    counts = Counter()
+
+    # Iterate over the transactions and add the "to" and "from" addresses to the Counter
+    for tx in transactions:
+        counts[tx["to"]] += 1
+        counts[tx["from"]] += 1
+
+    # Get the 10 most common addresses using the most_common method
+    top_addresses = counts.most_common(10)
+
+    # Create a DataFrame of the top addresses using Pandas
+    df = pd.DataFrame(top_addresses, columns=["Ethereum Address", "Count"])
+    # Filter out the rows containing the user entered address
+    df = df[df["Ethereum Address"] != address]
+    # Rearranging index
+    df.index = np.arange(1, len(df) + 1)
+
+
     # Set the style of the chart using the custom style
     with plt.style.context({
         'figure.facecolor': '#0E1117',
@@ -181,7 +214,6 @@ def get_transactions(address):
     }):
 
         #Create matplotlib chart on streamlit
-        
         st.set_option('deprecation.showPyplotGlobalUse', False)   
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -194,6 +226,7 @@ def get_transactions(address):
 
         #Show address analysed details
         st.write('Ethereum Address: ', address)
+        st.markdown('##')
 
         # Display max, min, and average balance on the page
         st.subheader('Analysis')
@@ -201,12 +234,17 @@ def get_transactions(address):
         st.markdown("Max balance: %.2f ETH on %s" % (max_balance, max_date))
         st.markdown("Min balance: %.3f ETH on %s" % (min_balance, min_date))
         st.markdown("Average balance: %.2f ETH over %d days" % (avg_balance, num_days))
+        # Print the total amount of ether spent on gas
+        st.markdown("Total gas spent: %.2f ETH" % (total_gas_spent))
 
         # Print the highest transfer in and out of Ethereum and their respective dates
         st.markdown('The largest transfer in was %.2f ETH on %s' % (max_transfer_in, max_transfer_in_date))
         st.markdown('The largest transfer out was %.2f ETH on %s' % (max_transfer_out, max_transfer_out_date))
+        st.markdown('##')
 
-
+        # Top external interactions
+        st.subheader('Top interactions')
+        st.write(df.style.set_properties(align="center"))
 
 #Call function, comment out for final version because it is called later
 #get_transactions(address)
