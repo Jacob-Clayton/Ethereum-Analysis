@@ -31,7 +31,7 @@ def configure():
 
 #Streamlit App setup
 st.title('Ethereum Account Analysis')
-st.markdown('###### App to analyse the balance of any Ethereum address')
+st.markdown('###### App to analyse the balance and interactions of any Ethereum address')
 
 # Streamlit text entry box for eth address
 address = st.text_input("Enter Ethereum Address or ENS Name: ")
@@ -71,6 +71,7 @@ def get_account_balance(address):
     #Formula to convert resulting number into recognisable Eth value
     value = int(data['result'])/ ETH_VALUE
     return value
+
 
 #Function to get a list of all transactions by address
 def get_transactions(address):
