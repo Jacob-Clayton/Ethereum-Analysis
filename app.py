@@ -256,8 +256,7 @@ def get_transactions(address):
         st.markdown("Max balance: %.2f ETH on %s" % (max_balance, max_date))
         st.markdown("Min balance: %.3f ETH on %s" % (min_balance, min_date))
         st.markdown("Average balance: %.2f ETH over %d days" % (avg_balance, num_days))
-        st.markdown("Total Sent: %.2f ETH" % (total_sent))
-        st.markdown("Total Received: %.2f ETH" % (total_received))
+        st.markdown("Total sent and received: %.2f ETH" % (total_received))
         # Print the total amount of ether spent on gas
         st.markdown("Total gas spent: %.2f ETH" % (total_gas_spent))
         # Print the total number of transactions
