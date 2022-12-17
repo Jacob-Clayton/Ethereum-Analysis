@@ -198,6 +198,22 @@ def get_transactions(address):
     # Rearranging index
     df.index = np.arange(1, len(df) + 1)
 
+    total_received = 0
+    total_sent = 0
+    for transaction in transactions:
+        value = int(transaction['value'])
+        if value > 0:
+            total_received += value
+        else:
+            total_sent += abs(value)
+    total_received = total_received / ETH_VALUE
+    total_sent = total_sent / ETH_VALUE
+
+    values = []
+    for transaction in transactions:
+        value = int(transaction['value']) / ETH_VALUE
+        values.append(value)
+
 
     # Set the style of the chart using the custom style
     with plt.style.context({
@@ -240,6 +256,8 @@ def get_transactions(address):
         st.markdown("Max balance: %.2f ETH on %s" % (max_balance, max_date))
         st.markdown("Min balance: %.3f ETH on %s" % (min_balance, min_date))
         st.markdown("Average balance: %.2f ETH over %d days" % (avg_balance, num_days))
+        st.markdown("Total Sent: %.2f ETH" % (total_sent))
+        st.markdown("Total Received: %.2f ETH" % (total_received))
         # Print the total amount of ether spent on gas
         st.markdown("Total gas spent: %.2f ETH" % (total_gas_spent))
         # Print the total number of transactions
@@ -251,8 +269,14 @@ def get_transactions(address):
         st.markdown('##')
 
         # Top external interactions
-        st.subheader('Top interactions')
+        st.subheader('Address interactions')
         st.write(df.style.set_properties(align="center"))
+        st.markdown('##')
+
+        # Transacton Bar Chart
+        st.subheader('Transaction History')
+        st.bar_chart(values)
+
 
 #Call function, comment out for final version because it is called later
 #get_transactions(address)
