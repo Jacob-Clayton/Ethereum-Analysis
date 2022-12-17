@@ -50,6 +50,8 @@ else:
     #If the input value is an ENS name, convert it to the corresponding Ethereum address
     address = web3.ens.address(address)
 
+# Create oringinal address because address is changed later
+original_address = address
 
 #Function to call the Etherscan API
 def make_api_url(module, action, address, **kwargs):
@@ -88,6 +90,9 @@ def get_transactions(address):
 
     #Merge external and internal eth transactions
     data.extend(data2)
+
+    # Calculate the total number of transactions
+    total_transactions = len(data)
 
     #Sort transactions by date
     data.sort(key=lambda x: int(x['timeStamp']))
@@ -226,7 +231,7 @@ def get_transactions(address):
         
 
         #Show address analysed details
-        st.write('Ethereum Address: ', address)
+        st.write('Ethereum Address: ', original_address)
         st.markdown('##')
 
         # Display max, min, and average balance on the page
@@ -237,6 +242,8 @@ def get_transactions(address):
         st.markdown("Average balance: %.2f ETH over %d days" % (avg_balance, num_days))
         # Print the total amount of ether spent on gas
         st.markdown("Total gas spent: %.2f ETH" % (total_gas_spent))
+        # Print the total number of transactions
+        st.markdown(f"Total transactions: {total_transactions}")
 
         # Print the highest transfer in and out of Ethereum and their respective dates
         st.markdown('The largest transfer in was %.2f ETH on %s' % (max_transfer_in, max_transfer_in_date))
