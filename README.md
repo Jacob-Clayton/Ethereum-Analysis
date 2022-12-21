@@ -2,7 +2,7 @@
 
 ### View [live application](https://jacob-clayton-etherscan-api-app-sblsnb.streamlit.app/)
 
-To summarise:
+To summarise what goes on behind the scenes:
 1. Get api keys from .env and enter wallet address you want to analyse
 2. Call two api endpoints
 3. Get account balance
