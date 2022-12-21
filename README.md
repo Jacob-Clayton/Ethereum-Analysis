@@ -1,5 +1,8 @@
-# Etherscan API Code
+# Ethereum Analytics Tool
 
+### View [live application](https://jacob-clayton-etherscan-api-app-sblsnb.streamlit.app/)
+
+To summarise:
 1. Get api keys from .env and enter wallet address you want to analyse
 2. Call two api endpoints
 3. Get account balance
@@ -15,5 +18,5 @@
 
 
 # API Sources
-https://etherscan.io/apis
-https://www.infura.io/
+- https://etherscan.io/apis
+- https://www.infura.io/
