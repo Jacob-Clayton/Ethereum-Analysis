@@ -1,6 +1,6 @@
 # Ethereum Analytics Tool
 
-### View [live application](https://jacob-clayton-etherscan-api-app-sblsnb.streamlit.app/)
+### Live here: https://jacob-clayton-etherscan-api-app-sblsnb.streamlit.app/
 
 To summarise what goes on behind the scenes:
 1. Get api keys from .env and enter wallet address you want to analyse
