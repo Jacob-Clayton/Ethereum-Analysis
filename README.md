@@ -2,6 +2,9 @@
 
 ### Live here: https://jacob-clayton-etherscan-api-app-sblsnb.streamlit.app/
 
+#### Bugs:
+Code does not account for bridged ETH which can result in a negative balance if ETH is bridged out. Or a substantially overestimated balance if ETH is bridged in to the account.
+
 To summarise what goes on behind the scenes:
 1. Get api keys from .env and enter wallet address you want to analyse
 2. Call two api endpoints
